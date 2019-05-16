@@ -19,9 +19,17 @@ jobs:
       - checkout
       - run: make test
 
+  build:
+    executor:
+      name: default
+    steps:
+      - checkout
+      - run: make dist
+
 workflows:
   version: 2
   untagged-build:
     jobs:
       - lint
       - test
+      - build
