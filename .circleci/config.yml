@@ -12,9 +12,6 @@ commands:
       bucket:
         type: string
     steps:
-      - attach_workspace:
-          at: dist
-      - run: 'mv dist/*.tar.gz dist/$CIRCLE_PROJECT_REPONAME-ci.tar.gz'
       - aws-s3/copy:
           from: "dist/*.tar.gz"
           to: << parameters.bucket >>
@@ -53,6 +50,9 @@ jobs:
     docker:
         - image: circleci/python:2.7
     steps:
+        - attach_workspace:
+            at: dist
+        - run: 'mv dist/*.tar.gz dist/$CIRCLE_PROJECT_REPONAME-ci.tar.gz'
         - deploy:
             bucket: "s3://mattermost-plugins-ci/ci/"
 
@@ -60,15 +60,11 @@ jobs:
     docker:
         - image: circleci/python:2.7
     steps:
+        - attach_workspace:
+            at: dist
+        - run: 'mv dist/*.tar.gz dist/$CIRCLE_PROJECT_REPONAME-release.tar.gz'
         - deploy:
             bucket: "s3://mattermost-plugins-ci/release/"
-
-  deploy-test:
-    docker:
-        - image: circleci/python:2.7
-    steps:
-        - deploy:
-            bucket: "s3://mattermost-plugins-ci/ci/"
 
 workflows:
   version: 2
@@ -77,12 +73,6 @@ workflows:
       - lint
       - test
       - build
-      - deploy-test:
-          context: plugin-ci
-          requires:
-            - lint
-            - test
-            - build
       - deploy-ci:
           filters:
             branches:
