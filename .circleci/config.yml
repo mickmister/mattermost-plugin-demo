@@ -40,8 +40,10 @@ jobs:
     steps:
         - attach_workspace:
             at: dist
-        - run: ls dist
-      
+        - aws-s3/copy:
+            from: "dist/*"
+            to: "s3://mattermost-plugins-ci/ci/"
+            arguments: "--acl public-read"
 
 workflows:
   version: 2
@@ -51,6 +53,7 @@ workflows:
       - test
       - build
       - deploy:
+          context: plugin-ci
           requires:
             - lint
             - test
