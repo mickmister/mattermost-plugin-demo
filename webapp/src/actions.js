@@ -1,4 +1,5 @@
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
+import {Client4} from 'mattermost-redux/client';
 
 import {id as pluginId} from './manifest';
 import {STATUS_CHANGE, OPEN_ROOT_MODAL, CLOSE_ROOT_MODAL} from './action_types';
@@ -36,7 +37,7 @@ export const getPluginServerRoute = (state) => {
 };
 
 export const getStatus = () => async (dispatch, getState) => {
-    fetch(getPluginServerRoute(getState()) + '/status').then((r) => r.json()).then((r) => {
+    fetch(getPluginServerRoute(getState()) + '/status', Client4.getOptions({})).then((r) => r.json()).then((r) => {
         dispatch({
             type: STATUS_CHANGE,
             data: r.enabled,
